@@ -28,13 +28,13 @@ local camera = workspace.CurrentCamera
 -- 摄像机配置
 local INITIAL_CAMERA_OFFSET = Vector3.new(2.5, 2.5, 5)
 local cameraOffset = INITIAL_CAMERA_OFFSET
-local mouseSensitivity = 0.1
+local mouseSensitivity = 0.15
 local Y_CLAMP_MIN = -80
 local Y_CLAMP_MAX = 80
 
 -- 平滑度配置
-local headSmoothness = 0.5
-local bodySmoothness = 0.3
+local headSmoothness = 0.3 
+local bodySmoothness = 0.1  
 local cameraSmoothness = 0.5
 local cameraTargetSmoothness = 0.08
 
@@ -114,8 +114,13 @@ end
 -- ============================================================================
 
 local function updateHeadAndBodyAngles(targetAngleX, isMoving)
-	local headAlpha = headSmoothness
-	local bodyAlpha = bodySmoothness + (isMoving and MOVE_ALIGN_SMOOTHNESS or 0)
+	-- 检测快速旋转：如果目标角度与头部/身体差距过大，加速跟随
+	local headDelta = math.abs(shortestAngleDelta(headAngleX, targetAngleX))
+	local bodyDelta = math.abs(shortestAngleDelta(bodyAngleX, targetAngleX))
+
+	-- 如果差距超过 90°，视为快速旋转，提高跟随速度
+	local headAlpha = headDelta > 90 and 0.95 or headSmoothness
+	local bodyAlpha = bodyDelta > 90 and 0.85 or (bodySmoothness + (isMoving and MOVE_ALIGN_SMOOTHNESS or 0))
 
 	headAngleX = stepAngleDeg(headAngleX, targetAngleX, headAlpha)
 	bodyAngleX = stepAngleDeg(bodyAngleX, targetAngleX, bodyAlpha)

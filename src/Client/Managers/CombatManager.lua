@@ -49,6 +49,9 @@ local CAMERA_SMOOTHNESS = 0.1
 -- 奔跑配置
 local RUNNING_FOV_OFFSET = 10
 
+-- 攻击连招配置
+local COMBO_RESET_DELAY = 0.8   -- 连招重置延迟（秒）
+
 -- ============================================================================
 -- 战斗管理器
 -- ============================================================================
@@ -74,6 +77,12 @@ local CombatManager = {
 	_smoothCrosshairAngleY = 0,
 	_smoothCrosshairX = 0.5,
 	_smoothCrosshairY = 0.5,
+
+	-- === 攻击连招状态 ===
+	_currentComboIndex = 0,        -- 当前连招索引（0表示未攻击）
+	_comboResetTime = 0,           -- 连招重置时间
+	_currentAttackTrack = nil,     -- 当前攻击动画轨道
+	_lightAttackCount = 0,         -- 轻攻击动画数量
 
 	-- === 连接管理 ===
 	_crouchConnection = nil,
@@ -118,10 +127,7 @@ function CombatManager:StartAiming()
 	self.IsRunning = false
 
 	if self._animManager then
-		local aimAnimation = self._animManager:PlayAnimation("Aiming", 0.1)
-		if aimAnimation then
-			aimAnimation.Priority = Enum.AnimationPriority.Action
-		end
+		self._animManager:PlayAnimation("Aiming", 0.1, Enum.AnimationPriority.Action)
 	end
 
 	UIManager:SettingAlpha("Vignette", 0, true, 0.2)
@@ -194,11 +200,7 @@ function CombatManager:StartCrouching()
 	PlayerManager.IsCrouching = true
 
 	if self._animManager then
-		local crouchAnimation = self._animManager:PlayAnimation("Down", 0.2)
-		if crouchAnimation then
-			crouchAnimation.Priority = Enum.AnimationPriority.Idle
-			crouchAnimation.Looped = true
-		end
+		self._animManager:PlayAnimation("Down", 0.2, Enum.AnimationPriority.Idle, true)
 	end
 
 	if self._crouchConnection then
@@ -262,10 +264,7 @@ function CombatManager:PerformDodge()
 	self._humanoid.WalkSpeed = 0
 
 	if self._animManager then
-		local dodgeAnimation = self._animManager:PlayAnimation("Dodge", 0.2)
-		if dodgeAnimation then
-			dodgeAnimation.Priority = Enum.AnimationPriority.Action
-		end
+		self._animManager:PlayAnimation("Dodge", 0.2, Enum.AnimationPriority.Action)
 	end
 
 	local moveDirection = self._humanoid.MoveDirection
@@ -342,18 +341,71 @@ end
 -- ============================================================================
 -- 攻击系统
 -- ============================================================================
-function CombatManager:Attack()
-	if not self.IsAttacking and not self.IsAiming then
-		
-		self.IsAttacking=true
-		
-		if self._animManager then
-			local AttackAnimation = self._animManager:PlayAnimation("None_LightAttack_2",0.1)
-			AttackAnimation.Priority = Enum.AnimationPriority.Action
-			AttackAnimation.Looped=false
-		end
-		self.IsAttacking = false
+
+-- 缓存攻击动画数量
+function CombatManager:_cacheAttackAnimations()
+	if not self._animManager then return end
+	self._lightAttackCount = self._animManager:GetAttackCount("LightAttack")
+end
+
+-- 切换武器时更新攻击动画
+function CombatManager:SetWeaponType(weaponType)
+	if self._animManager then
+		self._animManager:LoadAttackAnimations(weaponType)
+		self:_cacheAttackAnimations()
+		self._currentComboIndex = 0
 	end
+end
+
+-- 轻攻击（支持连招）
+function CombatManager:Attack()
+	-- 检查是否可以攻击
+	if self.IsAiming or self._lightAttackCount == 0 then
+		return
+	end
+
+	-- 检查是否在攻击动画中
+	if self.IsAttacking and self._currentAttackTrack and self._currentAttackTrack.IsPlaying then
+		return
+	end
+
+	-- 检查连招重置
+	local currentTime = tick()
+	if currentTime > self._comboResetTime then
+		self._currentComboIndex = 0
+	end
+
+	-- 计算下一个连招索引
+	self._currentComboIndex = self._currentComboIndex + 1
+	if self._currentComboIndex > self._lightAttackCount then
+		self._currentComboIndex = 1
+	end
+
+	-- 播放攻击动画
+	local attackTrack = self._animManager:PlayAttackAnimation(
+		"LightAttack",
+		self._currentComboIndex,
+		0.1,
+		Enum.AnimationPriority.Action,
+		false
+	)
+
+	if not attackTrack then
+		return
+	end
+
+	self.IsAttacking = true
+	self._currentAttackTrack = attackTrack
+
+	-- 监听动画结束
+	local connection
+	connection = attackTrack.Stopped:Connect(function()
+		connection:Disconnect()
+		self.IsAttacking = false
+		self._currentAttackTrack = nil
+		-- 设置连招重置时间
+		self._comboResetTime = tick() + COMBO_RESET_DELAY
+	end)
 end
 
 -- ============================================================================
@@ -364,8 +416,11 @@ function CombatManager:Init(character)
 	self._character = character
 	self._humanoid = character:WaitForChild("Humanoid")
 
-	-- 初始化动画管理器
-	self._animManager = AnimationManager.new(Player)
+	-- 初始化动画管理器（默认武器类型为"None"）
+	self._animManager = AnimationManager.new(Player, "None")
+
+	-- 缓存攻击动画轨道
+	self:_cacheAttackAnimations()
 
 	self.OriginalWalkSpeed = self._humanoid.WalkSpeed
 	self.OriginalJumpHeight = self._humanoid.JumpHeight
@@ -411,10 +466,17 @@ function CombatManager:Cleanup()
 	self.IsDodging = false
 	self.IsAiming = false
 	self.IsRunning = false
+	self.IsAttacking = false
 	PlayerManager.IsCrouching = false
 	PlayerManager.IsDodging = false
 	PlayerManager.IsAiming = false
 	PlayerManager.IsRunning = false
+
+	-- 重置连招状态
+	self._currentComboIndex = 0
+	self._comboResetTime = 0
+	self._currentAttackTrack = nil
+	self._lightAttackCount = 0
 
 	print("[CombatManager] 清理完成")
 end
