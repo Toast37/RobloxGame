@@ -14,7 +14,9 @@ AnimationManager.__index = AnimationManager
 local ANIMATION_IDS = {
 	Dodge = "rbxassetid://115583572020539",
 	Down = "rbxassetid://74409949830270",
-	Aiming = "rbxassetid://97130422316194"
+	Aiming = "rbxassetid://97130422316194",
+	None_LightAttack_1 = "rbxassetid://86626408791230",
+	None_LightAttack_2 = "rbxassetid://132519929912742",
 }
 
 -- 内部函数：从Player或Character获取Character

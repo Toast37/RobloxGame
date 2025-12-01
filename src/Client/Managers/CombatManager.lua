@@ -21,6 +21,10 @@ local CameraEffectManager = require(ReplicatedStorage:WaitForChild("CameraEffect
 local AnimationManager = require(ReplicatedStorage:WaitForChild("AnimationManager"))
 local UIManager = require(ReplicatedStorage:WaitForChild("UIManager"))
 
+if not UIManager.IsReady then
+	repeat task.wait() until UIManager.IsReady
+end
+
 -- ============================================================================
 -- 配置参数
 -- ============================================================================
@@ -55,6 +59,7 @@ local CombatManager = {
 	IsCrouching = false,
 	IsAiming = false,
 	IsRunning = false,
+	IsAttacking = false,
 
 	-- === 原始值 ===
 	OriginalWalkSpeed = PlayerManager.DefaultWalkSpeed,
@@ -312,6 +317,7 @@ function CombatManager:_updateCrosshairPosition()
 		* CFrame.Angles(math.rad(self._smoothCrosshairAngleY), 0, 0)
 	local rayOrigin = rootPart.Position + Vector3.new(0, 1.5, 0)
 	local rayDirection = crosshairRotation.LookVector
+	
 	local rayEndPoint = rayOrigin + rayDirection * 100
 
 	local camera = workspace.CurrentCamera
@@ -329,7 +335,25 @@ function CombatManager:_updateCrosshairPosition()
 	self._smoothCrosshairY = self._smoothCrosshairY + (targetCrosshairY - self._smoothCrosshairY) * 0.3
 
 	local targetPosition = UDim2.new(self._smoothCrosshairX, 0, self._smoothCrosshairY, 0)
+	if UIManager:HasUI(CROSSHAIR_UI_NAME) then
 	UIManager:MoveUI(CROSSHAIR_UI_NAME, targetPosition, false)
+	end
+end
+-- ============================================================================
+-- 攻击系统
+-- ============================================================================
+function CombatManager:Attack()
+	if not self.IsAttacking and not self.IsAiming then
+		
+		self.IsAttacking=true
+		
+		if self._animManager then
+			local AttackAnimation = self._animManager:PlayAnimation("None_LightAttack_2",0.1)
+			AttackAnimation.Priority = Enum.AnimationPriority.Action
+			AttackAnimation.Looped=false
+		end
+		self.IsAttacking = false
+	end
 end
 
 -- ============================================================================

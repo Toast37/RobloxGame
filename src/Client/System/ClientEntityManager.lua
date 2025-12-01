@@ -247,7 +247,7 @@ local function onServerSync(data)
 				attribute.CurrentValue,
 				data.currentValue,
 				predictionError
-			))
+				))
 
 			-- 使用 SetValue 平滑校正（会触发 Changed 事件）
 			attribute:SetValue(data.currentValue)

@@ -153,7 +153,7 @@ local function setupCharacter(newCharacter)
 	local playerConfig = GameConfig.GetCharacterConfig("Player")
 
 	-- 创建生命值组件（使用配置数据）
-	PlayerManager.HealthComp = HealthComponent.new(character, {
+	PlayerManager.HealthComp = HealthComponent.new(player, {
 		MaxHealth = playerConfig.Health.MaxValue,
 		RegenRate = playerConfig.Health.RegenRate,
 		RegenCooldown = playerConfig.Health.RegenCooldown,
@@ -164,7 +164,7 @@ local function setupCharacter(newCharacter)
 	end)
 
 	-- 创建体力组件（使用配置数据）
-	PlayerManager.StaminaComp = StaminaComponent.new(character, {
+	PlayerManager.StaminaComp = StaminaComponent.new(player, {
 		MaxStamina = playerConfig.Stamina.MaxValue,
 		RegenRate = playerConfig.Stamina.RegenRate,
 		RegenCooldown = playerConfig.Stamina.RegenCooldown,
@@ -188,7 +188,7 @@ local function setupCharacter(newCharacter)
 
 		if PlayerManager.IsLowHealth and not wasLowHealth then
 			print("[PlayerManager] 残血状态激活")
-            --（残血状态占位符）
+			--（残血状态占位符）
 		elseif not PlayerManager.IsLowHealth and wasLowHealth then
 			print("[PlayerManager] 残血状态解除")
 

@@ -21,6 +21,7 @@ local DODGE_KEY = Enum.KeyCode.Q
 local CROUCH_KEY = Enum.KeyCode.C
 local RUN_KEY = Enum.KeyCode.LeftShift
 local AIM_KEY = Enum.UserInputType.MouseButton2
+local ATTACK_KEY = Enum.UserInputType.MouseButton1
 
 -- ============================================================================
 -- 输入处理函数
@@ -59,6 +60,13 @@ local function AimAction(actionName, inputState, inputObject)
 	end
 end
 
+-- 攻击输入
+local function AttackAction(actionNamae,inputState,inputObject)
+	if inputState == Enum.UserInputState.Begin then
+		CombatManager:Attack()
+	end
+end
+
 -- ============================================================================
 -- 初始化和清理
 -- ============================================================================
@@ -79,6 +87,7 @@ local function Init()
 	ContextActionService:BindAction("CrouchAction", CrouchAction, false, CROUCH_KEY)
 	ContextActionService:BindAction("RunAction", RunAction, false, RUN_KEY)
 	ContextActionService:BindAction("AimAction", AimAction, false, AIM_KEY)
+	ContextActionService:BindAction("AttackAction", AttackAction, false, ATTACK_KEY)
 
 	print("[Control] 输入系统初始化完成")
 	print("[Control] - Q: 闪避")
