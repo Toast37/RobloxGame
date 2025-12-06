@@ -7,32 +7,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ContentProvider = game:GetService("ContentProvider")
 
+-- 导入动画配置
+local AnimationConfigs = require(ReplicatedStorage:WaitForChild("Configs"):WaitForChild("AnimationConfigs"))
+
 local AnimationManager = {}
 AnimationManager.__index = AnimationManager
-
--- 动画ID配置字典
-local ANIMATION_IDS = {
-	Dodge = "rbxassetid://115583572020539",
-	Down = "rbxassetid://74409949830270",
-	Aiming = "rbxassetid://97130422316194",
-}
-
--- 攻击动画字典（按武器类型分类）
-local ATTACK_ANIMATIONS = {
-	None = {
-		LightAttack = {
-			"rbxassetid://86626408791230",   -- LightAttack1
-			"rbxassetid://132519929912742",  -- LightAttack2
-			-- 可继续添加更多连招动画
-		},
-		HeavyAttack = {
-			-- 重攻击动画预留
-		},
-	},
-	-- 可添加更多武器类型
-	-- Sword = { LightAttack = {...}, HeavyAttack = {...} },
-}
-
+	
 -- 内部函数：从Player或Character获取Character
 local function getCharacter(target)
 	-- 检测是否是Player对象
@@ -77,16 +57,16 @@ function AnimationManager.new(target, weaponType)
 	self.attackTracks = {}  -- 攻击动画轨道（按类型分组）
 	self.currentWeaponType = weaponType or "None"
 
-	-- 加载基础动画
-	for name, animId in pairs(ANIMATION_IDS) do
+	-- 加载基础动画（从配置中读取）
+	for animName, animId in pairs(AnimationConfigs.BasicAnimations) do
 		local success, track = pcall(function()
 			return loadAnimationTrack(character, animId)
 		end)
 
 		if success and track then
-			self.animationTracks[name] = track
+			self.animationTracks[animName] = track
 		else
-			warn("Failed to load animation: " .. name)
+			warn("Failed to load animation: " .. animName)
 		end
 	end
 
@@ -117,14 +97,15 @@ function AnimationManager:LoadAttackAnimations(weaponType)
 	self.currentWeaponType = weaponType
 	self.attackTracks = {}
 
-	local weaponAnims = ATTACK_ANIMATIONS[weaponType]
-	if not weaponAnims then
+	-- 从配置中获取攻击动画ID数组
+	local weaponData = AnimationConfigs.AttackAnimations[weaponType]
+	if not weaponData then
 		warn("AnimationManager:LoadAttackAnimations - Unknown weapon type: " .. tostring(weaponType))
 		return
 	end
 
 	-- 加载该武器类型的所有攻击动画
-	for attackType, animIds in pairs(weaponAnims) do
+	for attackType, animIds in pairs(weaponData) do
 		self.attackTracks[attackType] = {}
 		for i, animId in ipairs(animIds) do
 			local success, track = pcall(function()
@@ -264,7 +245,7 @@ end
 
 -- 静态播放动画函数（不需要初始化，直接播放）
 -- @param target: Player或Character对象
--- @param animationName: 动画名称（从ANIMATION_IDS字典中获取）
+-- @param animationName: 动画名称（从AnimationConfigs.BasicAnimations中获取）
 -- @param fadeTime: 淡入淡出时间，默认为0（无淡入淡出）
 -- @return: 动画轨道对象，如果失败返回nil
 function AnimationManager.Play(target, animationName, fadeTime)
@@ -277,8 +258,8 @@ function AnimationManager.Play(target, animationName, fadeTime)
 		return nil
 	end
 
-	-- 从字典中获取动画ID
-	local animId = ANIMATION_IDS[animationName]
+	-- 从配置中获取动画ID
+	local animId = AnimationConfigs.GetBasicAnimation(animationName)
 	if not animId then
 		warn("AnimationManager.Play - Animation not found: " .. tostring(animationName))
 		return nil
