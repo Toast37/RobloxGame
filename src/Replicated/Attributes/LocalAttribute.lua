@@ -27,7 +27,7 @@
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Attribute = require(ReplicatedStorage:WaitForChild("Attribute"))
+local Attribute = require(ReplicatedStorage:WaitForChild("Replicated"):WaitForChild("Attributes"):WaitForChild("Attribute"))
 
 local LocalAttribute = setmetatable({}, {__index = Attribute})
 LocalAttribute.__index = LocalAttribute

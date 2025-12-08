@@ -11,8 +11,8 @@ local ContextActionService = game:GetService("ContextActionService")
 local TweenService = game:GetService("TweenService")
 
 -- 模块
-local PlayerManager = require(game.ReplicatedStorage:WaitForChild("PlayerManager"))
-local CameraEffectManager = require(game.ReplicatedStorage:WaitForChild("CameraEffectManager"))
+local PlayerManager = require(game.ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("PlayerManager"))
+local CameraEffectManager = require(game.ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("CameraEffectManager"))
 
 -- UI设置
 game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, false)

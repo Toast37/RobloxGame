@@ -8,7 +8,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ContentProvider = game:GetService("ContentProvider")
 
 -- 导入动画配置
-local AnimationConfigs = require(ReplicatedStorage:WaitForChild("Configs"):WaitForChild("AnimationConfigs"))
+local AnimationConfigs = require(ReplicatedStorage:WaitForChild("Replicated"):WaitForChild("Configs"):WaitForChild("AnimationConfigs"))
 
 local AnimationManager = {}
 AnimationManager.__index = AnimationManager

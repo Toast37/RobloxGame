@@ -16,10 +16,10 @@ end
 
 -- 模块引用
 local Player = Players.LocalPlayer
-local PlayerManager = require(ReplicatedStorage:WaitForChild("PlayerManager"))
-local CameraEffectManager = require(ReplicatedStorage:WaitForChild("CameraEffectManager"))
-local AnimationManager = require(ReplicatedStorage:WaitForChild("AnimationManager"))
-local UIManager = require(ReplicatedStorage:WaitForChild("UIManager"))
+local PlayerManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("PlayerManager"))
+local CameraEffectManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("CameraEffectManager"))
+local AnimationManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("AnimationManager"))
+local UIManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("UIManager"))
 
 if not UIManager.IsReady then
 	repeat task.wait() until UIManager.IsReady

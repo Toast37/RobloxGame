@@ -7,7 +7,7 @@ local ContextActionService = game:GetService("ContextActionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Player = Players.LocalPlayer
-local PlayerManager = require(ReplicatedStorage:WaitForChild("PlayerManager"))
+local PlayerManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("PlayerManager"))
 
 -- 配置
 local LOCK_KEY = Enum.KeyCode.Tab

@@ -30,12 +30,12 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- 引入管理器和组件
-local CameraEffectManager = require(ReplicatedStorage:WaitForChild("CameraEffectManager"))
-local HealthComponent = require(ReplicatedStorage:WaitForChild("HealthComponent"))
-local StaminaComponent = require(ReplicatedStorage:WaitForChild("StaminaComponent"))
+local CameraEffectManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("CameraEffectManager"))
+local HealthComponent = require(ReplicatedStorage:WaitForChild("Replicated"):WaitForChild("Components"):WaitForChild("HealthComponent"))
+local StaminaComponent = require(ReplicatedStorage:WaitForChild("Replicated"):WaitForChild("Components"):WaitForChild("StaminaComponent"))
 
 -- 引入游戏配置数据库
-local GameConfig = require(ReplicatedStorage:WaitForChild("GameConfig"))
+local GameConfig = require(ReplicatedStorage:WaitForChild("Replicated"):WaitForChild("Configs"):WaitForChild("GameConfig"))
 
 -- ============================================================================
 -- 公开状态变量

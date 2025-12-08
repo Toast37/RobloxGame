@@ -19,10 +19,10 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- 引入服务器权威数据包管理器
-local ServerEntityManager = require(script.Parent:WaitForChild("ServerEntityManager"))
+local ServerEntityManager = require(script.Parent.Parent:WaitForChild("Systems"):WaitForChild("ServerEntityManager"))
 
 -- 引入游戏配置数据库
-local GameConfig = require(script.Parent:WaitForChild("GameConfig"))
+local GameConfig = require(ReplicatedStorage:WaitForChild("Replicated"):WaitForChild("Configs"):WaitForChild("GameConfigs"))
 
 -- ============================================================================
 -- ServerPlayerManager 模块

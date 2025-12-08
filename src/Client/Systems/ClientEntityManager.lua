@@ -34,8 +34,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 -- 引入数据包类
-local LocalAttribute = require(ReplicatedStorage:WaitForChild("LocalAttribute"))
-local MirrorAttribute = require(ReplicatedStorage:WaitForChild("MirrorAttribute"))
+local LocalAttribute = require(ReplicatedStorage:WaitForChild("Replicated"):WaitForChild("Attributes"):WaitForChild("LocalAttribute"))
+local MirrorAttribute = require(ReplicatedStorage:WaitForChild("Replicated"):WaitForChild("Attributes"):WaitForChild("MirrorAttribute"))
 
 -- ============================================================================
 -- ClientEntityManager 模块

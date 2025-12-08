@@ -37,7 +37,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- 引入 ClientEntityManager（客户端镜像管理器）
-local ClientEntityManager = require(ReplicatedStorage:WaitForChild("ClientEntityManager"))
+local ClientEntityManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("System"):WaitForChild("ClientEntityManager"))
 
 -- ============================================================================
 -- StaminaComponent 类

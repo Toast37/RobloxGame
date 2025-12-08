@@ -10,7 +10,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- 模块
 local Player = Players.LocalPlayer
-local CombatManager = require(ReplicatedStorage:WaitForChild("CombatManager"))
+local CombatManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("CombatManager"))
 
 -- ============================================================================
 -- 配置参数

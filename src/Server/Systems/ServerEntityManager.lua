@@ -33,7 +33,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 -- 引入 LocalAttribute 类（服务器只使用完整功能的 LocalAttribute）
-local LocalAttribute = require(script.Parent:WaitForChild("LocalAttribute"))
+local LocalAttribute = require(ReplicatedStorage:WaitForChild("Replicated"):WaitForChild("Attributes"):WaitForChild("LocalAttribute"))
 
 -- ============================================================================
 -- ServerEntityManager 模块

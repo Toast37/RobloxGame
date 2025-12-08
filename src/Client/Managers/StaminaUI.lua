@@ -2,8 +2,8 @@
 -- 获取组件
 --===================================
 local ReplicatedStorage = game.ReplicatedStorage
-local PlayerManager = require(ReplicatedStorage:WaitForChild("PlayerManager"))
-local UIManager = require(ReplicatedStorage:WaitForChild("UIManager"))
+local PlayerManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("PlayerManager"))
+local UIManager = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("Managers"):WaitForChild("UIManager"))
 
 --===================================
 -- 获取服务
